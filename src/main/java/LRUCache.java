@@ -46,7 +46,7 @@ public class LRUCache<T, U> implements Cache<T, U> {
             link = new Link(key, _baseProvider.get(key));
             insert(link);
 
-            // Remove an item from the linked list and map.
+            // When we exceed the capacity, remove an item from the linked list and map.
             if (_map.size() > _capacity) {
                 removeLeastRecent();
             }
@@ -81,7 +81,7 @@ public class LRUCache<T, U> implements Cache<T, U> {
     }
 
     private void removeLeastRecent() {
-        // When we exceed the capacity, remove the least recent element from the map.
+        // Remove the least recent element from the map.
         _map.remove(leastRecent.key);
         // Then, make the next-least-recent element the least recent.
         Link next = leastRecent.next;
@@ -103,6 +103,8 @@ public class LRUCache<T, U> implements Cache<T, U> {
         front.previous = behind;
         if(behind != null)
             behind.next = front;
+        else
+            leastRecent = front;
         // Move the specified link to the front
         link.next = null;
         link.previous = mostRecent;

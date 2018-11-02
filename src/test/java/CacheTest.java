@@ -21,6 +21,6 @@ public class CacheTest {
         cache.get(6);
         assertEquals(cache.getNumMisses(), misses + 1);
         cache.get(1);
-        assertEquals(cache.getNumMisses(), misses + 2);
+        assertEquals(cache.getNumMisses(), misses + 1);
     }
 }
