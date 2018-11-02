@@ -44,28 +44,11 @@ public class LRUCache<T, U> implements Cache<T, U> {
 
             // Generate a new link to add to the linked list.
             link = new Link(key, _baseProvider.get(key));
-            _map.put(key, link);
-
-            // Insert the link into the linked list.
-            if (leastRecent == null) {
-                // The least recent item only needs updated initially and when we exceed the capacity.
-                leastRecent = link;
-            }
-            // Save the newest link as the most recent.
-            if (mostRecent != null) {
-                link.previous = mostRecent;
-                mostRecent.next = link;
-            }
-            mostRecent = link;
+            insert(link);
 
             // Remove an item from the linked list and map.
             if (_map.size() > _capacity) {
-                // When we exceed the capacity, remove the least recent element from the map.
-                _map.remove(leastRecent.key);
-                // Then, make the next-least-recent element the least recent.
-                Link next = leastRecent.next;
-                next.previous = null;
-                leastRecent = next;
+                removeLeastRecent();
             }
         }
 
@@ -79,6 +62,31 @@ public class LRUCache<T, U> implements Cache<T, U> {
      */
     public int getNumMisses() {
         return _numMisses;
+    }
+
+    private void insert(Link link) {
+        _map.put(link.key, link);
+
+        // Insert the link into the linked list.
+        if (leastRecent == null) {
+            // The least recent item only needs updated initially and when we exceed the capacity.
+            leastRecent = link;
+        }
+        // Save the newest link as the most recent.
+        if (mostRecent != null) {
+            link.previous = mostRecent;
+            mostRecent.next = link;
+        }
+        mostRecent = link;
+    }
+
+    private void removeLeastRecent() {
+        // When we exceed the capacity, remove the least recent element from the map.
+        _map.remove(leastRecent.key);
+        // Then, make the next-least-recent element the least recent.
+        Link next = leastRecent.next;
+        next.previous = null;
+        leastRecent = next;
     }
 
     /**
